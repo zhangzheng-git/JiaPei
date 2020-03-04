@@ -4,12 +4,15 @@ import time
 from pyecharts.charts import Bar
 from pyecharts import options as opts
 
-
+#同步mysql数据
 # mydb = MySQL('10.50.50.82','root','wk-net','haoxueche',3306)
 # mydb.ConnectDB()
+#去掉不合法身份证号
 # re = mydb.ExecuteSql("SELECT IdNumber,SchoolCode, CarType, State FROM ds_student where IdNumber REGEXP '[0-9]{18}|[0-9]{17}X'")
 # print(len(re))
+#连接mongodb
 mg = Mongo(host="127.0.0.1",port=27017,dbase="jiapei",table='data')
+#将需要统计数据存入mongodb
 # for row in re:
 #     # print(row)
 #     data={
@@ -18,15 +21,16 @@ mg = Mongo(host="127.0.0.1",port=27017,dbase="jiapei",table='data')
 #         "CarType":row[2],
 #         "State":row[3]
 #     }
-#     #存入mongodb
+#
 #     mg.InsertData(data)
 #
 # size = mg.FindCount("data",{})
 # print(size)
 
-
+#当前时间 用于后面计算年龄
 # LocalTime = time.localtime(time.time())
 # res = mg.FindAllData({},{'_id':False})
+#切换集合 将统计结果存储
 mg.ChangeCollection('excle')
 # for row in res:
 #     # print(row)
@@ -49,7 +53,7 @@ mg.ChangeCollection('excle')
 #     mg.InsertData(data)
 
 
-#mongodb查找
+#统计男女数量
 Man = mg.FindCount('excle',{'sex':'男'})
 Women = mg.FindCount('excle',{'sex':'女'})
 
@@ -61,7 +65,7 @@ for i in res:
     AgeAry.append(i['age'])
 AgeAry.sort()
 
-#年龄个数统计
+#年龄与个数字典
 AgeDrc={}
 for item in AgeAry:
     size = AgeAry.count(item)
@@ -70,12 +74,15 @@ for item in AgeAry:
     AgeDrc.update(data)
 print(len(AgeDrc))
 
+#年龄个数统计
 AgeCount=[]
 Age=[]
 for key in AgeDrc.keys():
     # print(key,AgeDrc[key])
     AgeCount.append(AgeDrc[key])
     Age.append(key)
+
+
 
 
 
