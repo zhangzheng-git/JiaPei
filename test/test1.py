@@ -46,13 +46,13 @@ def SchoolFiled(mg,schooltable):
         data = {'SchoolCode':school[index]}
         for row in res:
             datail={
-                'sex':sex,
+                'data':[{'sex':sex,
                 'age':age,
                 "CarType":row['CarType'],
-                "State":row['State']
+                "State":row['State']}]
             }
             data.update(datail)
-            print(data.values())
+
 
 
 
