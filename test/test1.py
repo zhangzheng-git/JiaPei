@@ -3,7 +3,8 @@ from tools.mongo import Mongo
 import time
 from pyecharts.charts import Bar
 from pyecharts import options as opts
-
+import numpy as np
+from pyecharts.globals import ThemeType
 results=[]
 
 def SysMysqltable(host,user,passwd,dbname,port):
@@ -35,24 +36,71 @@ def InsertMongo(mg):
     size = mg.FindCount("data",{})
     print(size)
 
+
 def SchoolFiled(mg,schooltable):
     res = mg.FindAllData({}, {'_id': False})
     school=[]
-    for row in res['SchoolCode']:
-        if row not in school:
-            school.append(row)
+    #统计驾校列表
+    for row in res:
+        if row['SchoolCode'] not in school:
+            school.append(row['SchoolCode'])
     for index in range(len(school)):
+        # falge = False
+        mg.ChangeCollection('excel')
+        #根据驾校编号查询记录
         res = mg.FindAllData({"SchoolCode":school[index]},{'_id':False})
         data = {'SchoolCode':school[index]}
         for row in res:
+            #数组形式
             datail={
-                'data':[{'sex':sex,
-                'age':age,
+                'sex':row['sex'],
+                'age':row['age'],
                 "CarType":row['CarType'],
-                "State":row['State']}]
+                "State":row['State']
             }
-            data.update(datail)
+            #插入新库
+            mg.ChangeCollection(schooltable)
+            # if not falge:
+            #     # data.update(datail)
+            #     # mg.InsertData(data)
+            #     mg.UpdateData({'SchoolCode': school[index]}, {'$set': {'data': datail}}, True)
+            #     # mg.UpdateData({'SchoolCode': school[index]}, {'$set': {'name':[{'host_id':'t1'}]}}, True)
+            #     falge = True
+            # else:
+            mg.UpdateData({'SchoolCode':school[index]},{'$push':{'data':datail}},True)
 
+def AgeDistrbution(mg,table):
+    mg.ChangeCollection(table)
+    res = mg.FindAllData({},{'SchoolCode':True,'data':True})
+    AgeAry = []
+    AgeDis = {}
+    School =[]
+    #全部数据
+    for row in res:
+        school = row['SchoolCode']
+        #驾校维度
+        res = mg.FindAllData({'SchoolCode':school},{'data':True})
+        for row1 in res:
+            # print(row['data'])
+            #同一驾校所有学员年龄
+            for indexs in range(len(row1['data'])):
+                age = row1['data'][indexs]['age']
+                AgeAry.append(age)
+        #驾校和该驾校所有学员年纪的字典
+        AgeDis={'SchoolCode':school,'age':AgeAry}
+        print(AgeDis["age"])
+        School.append(school)
+    # --------------------------------------------
+    bar = (
+        Bar(init_opts=opts.InitOpts(theme=ThemeType.PURPLE_PASSION))
+            .add_xaxis(School)
+            # .add_yaxis("年龄", AgeAry)
+            .add_yaxis("平均年龄",np.mean(np.array(AgeAry)) )
+            .set_global_opts(title_opts=opts.TitleOpts(title="柱状图", subtitle="各驾校平均年龄"))
+        # 或者直接使用字典参数
+        # .set_global_opts(title_opts={"text": "主标题", "subtext": "副标题"})
+    )
+    bar.render('render.html')
 
 
 
@@ -108,7 +156,7 @@ def AgeLevelChart(mg,newtable):
     for i in res:
         AgeAry.append(i['age'])
     AgeAry.sort()
-
+    SchoolCode
     #年龄与其对应的个数字典
     AgeDrc={}
     for item in AgeAry:
@@ -136,7 +184,11 @@ def AgeLevelChart(mg,newtable):
 
 if __name__ == '__main__':
     mg = ConnectMongo("127.0.0.1",27017,"jiapei",'data')
-    AgeLevelChart(mg,'excle')
+    # AnalyAndUpdateData(mg,'excel')
+    # mg.ChangeCollection('excel')
+    # SchoolFiled(mg,'school')
+    AgeDistrbution(mg,'school')
+
 
 
 
