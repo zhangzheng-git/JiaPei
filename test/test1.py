@@ -35,6 +35,28 @@ def InsertMongo(mg):
     size = mg.FindCount("data",{})
     print(size)
 
+def SchoolFiled(mg,schooltable):
+    res = mg.FindAllData({}, {'_id': False})
+    school=[]
+    for row in res['SchoolCode']:
+        if row not in school:
+            school.append(row)
+    for index in range(len(school)):
+        res = mg.FindAllData({"SchoolCode":school[index]},{'_id':False})
+        data = {'SchoolCode':school[index]}
+        for row in res:
+            datail={
+                'sex':sex,
+                'age':age,
+                "CarType":row['CarType'],
+                "State":row['State']
+            }
+            data.update(datail)
+            print(data.values())
+
+
+
+
 
 def AnalyAndUpdateData(mg,newtable):
     #当前时间 用于后面计算年龄
@@ -58,7 +80,8 @@ def AnalyAndUpdateData(mg,newtable):
             'sex':sex,
             'age':age,
             "SchoolCode": row['SchoolCode'],
-            "CarType":row['CarType']
+            "CarType":row['CarType'],
+            "State":row['State']
         }
         mg.InsertData(data)
 
