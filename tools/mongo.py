@@ -1,7 +1,7 @@
 import pymongo
 from bson.objectid import ObjectId
 class Mongo:
-    def __init__(self, host, port, username=None, password=None, dbase=None, table=None):
+    def __init__(self, host, port, dbase=None, table=None,username=None, password=None,):
         try:
             self.host = host
             self.port = port
