@@ -19,6 +19,7 @@ class Mongo:
         self.table = self.dbase[table]
         self.collection = self.dbase.get_collection(table)
 
+
     def InsertData(self, data):
         """插入数据"""
         ret = False
