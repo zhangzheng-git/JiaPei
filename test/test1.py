@@ -308,10 +308,11 @@ if __name__ == '__main__':
     # SexDistrbution(mg,'school')
     # TotolGraduate(mg,'school')
     # CarTypeSpread(mg,'school')
-    make_snapshot(snapshot, "sex.html","sex.png")
-    make_snapshot(snapshot, "graduate.html","graduate.png")
-    make_snapshot(snapshot, "ageaverage.html","geaverage.png")
-    make_snapshot(snapshot, "CarType.html","carType.png")
+    #生成图片
+    # make_snapshot(snapshot, "sex.html","sex.png")
+    # make_snapshot(snapshot, "graduate.html","graduate.png")
+    # make_snapshot(snapshot, "ageaverage.html","geaverage.png")
+    # make_snapshot(snapshot, "CarType.html","carType.png")
 
 
 
